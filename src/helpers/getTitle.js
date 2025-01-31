@@ -37,16 +37,16 @@ export default async function getTitle(id) {
     contentRating: props.aboveTheFoldData?.certificate?.rating ?? "N/A",
     isSeries: props.aboveTheFoldData.titleType.isSeries,
     productionStatus:
-      props.aboveTheFoldData.productionStatus.currentProductionStage.id,
+      props.aboveFoldData.productionStatus?.currentProductionStage?.id ?? "N/A",
     isReleased:
-      props.aboveTheFoldData.productionStatus.currentProductionStage.id ===
+      props.aboveTheFoldData.productionStatus?.currentProductionStage?.id ===
       "released",
     title: props.aboveTheFoldData.titleText.text,
-    image: props.aboveTheFoldData.primaryImage.url,
-    images: props.mainColumnData.titleMainImages.edges
-      .filter((e) => e.__typename === "ImageEdge")
-      .map((e) => e.node.url),
-    plot: props.aboveTheFoldData.plot.plotText.plainText,
+    image: props.aboveTheFoldData.primaryImage?.url ?? "",
+    images: props.mainColumnData.titleMainImages?.edges
+      ?.filter((e) => e.__typename === "ImageEdge")
+      ?.map((e) => e.node.url) || [],
+    plot: props.aboveTheFoldData.plot?.plotText?.plainText ?? "",
     runtime:
       props.aboveTheFoldData.runtime?.displayableProperty?.value?.plainText ??
       "",
@@ -59,37 +59,37 @@ export default async function getTitle(id) {
       wins: props.mainColumnData.wins?.total ?? 0,
       nominations: props.mainColumnData.nominations?.total ?? 0,
     },
-    genre: props.aboveTheFoldData.genres.genres.map((e) => e.id),
+    genre: props.aboveTheFoldData.genres?.genres?.map((e) => e.id) || [],
     releaseDetailed: {
       date: new Date(
-        props.aboveTheFoldData.releaseDate.year,
-        props.aboveTheFoldData.releaseDate.month - 1,
-        props.aboveTheFoldData.releaseDate.day
+        props.aboveTheFoldData.releaseDate?.year || 0,
+        (props.aboveTheFoldData.releaseDate?.month || 1) - 1,
+        props.aboveTheFoldData.releaseDate?.day || 1
       ).toISOString(),
-      day: props.aboveTheFoldData.releaseDate.day,
-      month: props.aboveTheFoldData.releaseDate.month,
-      year: props.aboveTheFoldData.releaseDate.year,
+      day: props.aboveTheFoldData.releaseDate?.day,
+      month: props.aboveTheFoldData.releaseDate?.month,
+      year: props.aboveTheFoldData.releaseDate?.year,
       releaseLocation: {
         country: props.mainColumnData.releaseDate?.country?.text,
         cca2: props.mainColumnData.releaseDate?.country?.id,
       },
-      originLocations: props.mainColumnData.countriesOfOrigin.countries.map(
+      originLocations: props.mainColumnData.countriesOfOrigin?.countries?.map(
         (e) => ({
           country: e.text,
           cca2: e.id,
         })
-      ),
+      ) || [],
     },
-    year: props.aboveTheFoldData.releaseDate.year,
-    spokenLanguages: props.mainColumnData.spokenLanguages.spokenLanguages.map(
+    year: props.aboveTheFoldData.releaseDate?.year,
+    spokenLanguages: props.mainColumnData.spokenLanguages?.spokenLanguages?.map(
       (e) => ({
         language: e.text,
         id: e.id,
       })
-    ),
-    filmingLocations: props.mainColumnData.filmingLocations.edges.map(
+    ) || [],
+    filmingLocations: props.mainColumnData.filmingLocations?.edges?.map(
       (e) => e.node.text
-    ),
+    ) || [],
     actors: getCredits("cast"),
     actors_v2: getCredits("cast", "2"),
     creators: getCredits("creator"),
@@ -98,11 +98,11 @@ export default async function getTitle(id) {
     directors_v2: getCredits("director", "2"),
     writers: getCredits("writer"),
     writers_v2: getCredits("writer", "2"),
-    top_credits: props.aboveTheFoldData.principalCredits.map((e) => ({
-      id: e.category.id,
-      name: e.category.text,
-      credits: e.credits.map((e) => e.name.nameText.text),
-    })),
+    top_credits: props.aboveTheFoldData.principalCredits?.map((e) => ({
+      id: e.category?.id,
+      name: e.category?.text,
+      credits: e.credits?.map((e) => e.name?.nameText?.text) || [],
+    })) || [],
     ...(props.aboveTheFoldData.titleType.isSeries
       ? await seriesFetcher(id)
       : {}),
