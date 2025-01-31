@@ -4,7 +4,7 @@ import packageJson from "../../package.json";
 
 index.get("/", async (c) => {
   return c.json({
-    status: "Running",
+    status: "Running 2",
     name: packageJson.name,
     description: packageJson.description,
     version: packageJson.version,
